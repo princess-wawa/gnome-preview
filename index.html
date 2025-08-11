@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GNOME Preview</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="preview-container">
+  <div class="top-bar">
+    <div class="arcmenu-in-top-bar">
+      <img src="images/customization/icons/arch.svg" alt="arcmenu Icon" class="arcmenu-icon">
+    </div>
+    <div class="time-indicator"><span id="current-time" aria-live="polite"></span></div>
+    <div class="quick-settings">
+        <div class="quick-settings-icon">
+            <img src="images/customization/icons/quick-settings.png" alt="Quick Settings">
+        </div>
+    </div>
+  </div>
+  <div class="preview-middle"></div>
+  <div class="bottom-area">
+      <div class="bottom-panel" aria-label="Panel"></div>
+      <div class="bottom-dock" aria-label="Dock">
+        <div class="dock-item" aria-label="Calendar">
+          <img src="images/customization/icons/calendar-app.svg" alt="Calendar">
+        </div>
+          <div class="dock-item" aria-label="File Explorer">
+              <img src="images/customization/icons/themable/file-manager.svg" alt="File Explorer">
+          </div>
+        <div class="dock-item" aria-label="Software">
+          <img src="images/customization/icons/software.svg" alt="Software">
+        </div>
+        <div class="dock-item" aria-label="Firefox">
+          <img src="images/customization/icons/firefox.svg" alt="Firefox">
+        </div>
+        <div class="dock-separator" role="separator" aria-hidden="true"></div>
+        <div class="dock-item open-app" aria-label="Nyarch Tour">
+          <img src="images/customization/icons/nyarch-tour.png" alt="Nyarch Tour">
+        </div>
+        <div class="dock-item open-app" aria-label="Nyarch Customize">
+          <img src="images/customization/icons/nyarch-customize.png" alt="Nyarch Customize">
+        </div>
+        <div class="dock-item" aria-label="Trash">
+          <img src="images/customization/icons/trash.svg" alt="Trashcan">
+        </div>
+        <div class="dock-item" aria-label="View App">
+          <img src="images/customization/icons/view-app.svg" alt="View App">
+        </div>
+      </div>
+  </div>
+</div>
+
+<!-- Controls under the preview -->
+<div class="controls">
+  <div class="controls-row">
+    <button id="btn-toggle-top">Toggle Top Panel</button>
+    <button id="btn-toggle-arcmenu">Toggle ArcMenu</button>
+  </div>
+  <div class="controls-row">
+    <button id="btn-toggle-theme">Toggle Theme (dark/light)</button>
+    <button id="btn-toggle-taskbar-pos">Toggle Taskbar Position (top/bottom)</button>
+    <button id="btn-cycle-taskbar">Cycle Taskbar Type</button>
+  </div>
+  <div class="controls-row">
+    <span>Color:</span>
+    <button class="color" data-color="#ff5555" style="background:#ff5555"></button>
+    <button class="color" data-color="#55ff55" style="background:#55ff55"></button>
+    <button class="color" data-color="#5588ff" style="background:#5588ff"></button>
+    <button class="color" data-color="#ffaa00" style="background:#ffaa00"></button>
+  </div>
+</div>
+
+  <script src="index.js" defer></script>
+</body>
+</html>
