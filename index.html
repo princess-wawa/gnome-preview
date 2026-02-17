@@ -1,77 +1,257 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GNOME Preview</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<div class="preview-container">
-  <div class="top-bar">
-    <div class="arcmenu-in-top-bar">
-      <img src="images/customization/icons/arch.svg" alt="arcmenu Icon" class="arcmenu-icon">
-    </div>
-    <div class="time-indicator"><span id="current-time" aria-live="polite"></span></div>
-    <div class="quick-settings">
+  <div class="preview-container preview">
+    <div class="top-bar shell-top-bar">
+      <div class="arcmenu-in-top-bar top-bar-activities">
+        <img src="images/customization/icons/arch.svg" alt="arcmenu Icon" class="arcmenu-icon">
+      </div>
+      <div class="time-indicator top-bar-clock"><span id="current-time" aria-live="polite"></span></div>
+      <div class="quick-settings top-bar-quick-settings">
         <div class="quick-settings-icon">
-            <img src="images/customization/icons/quick-settings.png" alt="Quick Settings">
+          <img src="images/customization/icons/quick-settings.png" alt="Quick Settings">
         </div>
+      </div>
     </div>
-  </div>
-  <div class="preview-middle"></div>
-  <div class="bottom-area">
-      <div class="bottom-panel" aria-label="Panel"></div>
-      <div class="bottom-dock" aria-label="Dock">
-        <div class="dock-item" aria-label="Calendar">
+    <div class="preview-middle workspace">
+      <!-- 4 independent containers inside the middle area, horizontally placeable via left/right percentages -->
+      <div class="dash-container sidebars">
+        <!-- Vertical dock for left/right positions (now inside dash-container) -->
+        <div class="vertical-dock sidebar-dock">
+          <div class="dock-item">
+            <img src="images/customization/icons/calendar-app.svg" alt="Calendar">
+          </div>
+          <div class="dock-item themeable-icon icon--themable">
+            <img src="images/customization/icons/themable/file-manager.svg" alt="File Explorer">
+          </div>
+          <div class="dock-item">
+            <img src="images/customization/icons/software.svg" alt="Software">
+          </div>
+          <div class="dock-item">
+            <img src="images/customization/icons/firefox.svg" alt="Firefox">
+          </div>
+          <div class="dock-separator-horizontal"></div>
+          <div class="dock-item open-app">
+            <img src="images/customization/icons/nyarch-tour.png" alt="Nyarch Tour">
+          </div>
+          <div class="dock-item open-app">
+            <img src="images/customization/icons/nyarch-customize.png" alt="Nyarch Customize">
+          </div>
+          <div class="dock-item">
+            <img src="images/customization/icons/trash.svg" alt="Trashcan">
+          </div>
+          <div class="dock-item">
+            <img src="images/customization/icons/view-app.svg" alt="View App">
+          </div>
+        </div>
+        <!-- Vertical panel analogous to the bottom panel (shown when taskbar type="panel" and position is left/right) -->
+        <div class="vertical-panel hidden sidebar-panel">
+          <div class="vertical-panel-content">
+            <div class="vertical-launcher">
+              <img id="vertical-launcher-icon" src="images/customization/icons/view-app.svg" alt="Launcher">
+            </div>
+            <div class="vertical-taskbar" role="list">
+              <div class="v-taskbar-item"><img src="images/customization/icons/calendar-app.svg" alt="Calendar"></div>
+              <div class="v-taskbar-item themeable-icon icon--themable"><img
+                  src="images/customization/icons/themable/file-manager.svg" alt="File Explorer"></div>
+              <div class="v-taskbar-item"><img src="images/customization/icons/software.svg" alt="Software"></div>
+              <div class="v-taskbar-item"><img src="images/customization/icons/firefox.svg" alt="Firefox"></div>
+              <div class="v-taskbar-item open-app"><img src="images/customization/icons/nyarch-tour.png"
+                  alt="Nyarch Tour"></div>
+              <div class="v-taskbar-item open-app"><img src="images/customization/icons/nyarch-customize.png"
+                  alt="Nyarch Customize"></div>
+            </div>
+            <div class="vertical-flex-spacer"></div>
+            <div class="vertical-time"><span id="current-time-vertical"></span></div>
+            <div class="vertical-quick-settings"><img
+                src="images/customization/icons/quick-settings-vertical-transparent.png" alt="Quick Settings"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arcmenu-ui">
+        <nav class="arcmenu-side" aria-label="ArcMenu categories">
+          <ul class="arcmenu-side-list">
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/home.svg"
+                alt="Home"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/favorite.svg"
+                alt="Favorite"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon"
+                src="images/customization/icons/arcmenu/frequent%20apps.svg" alt="Frequent Apps"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/all-app.svg"
+                alt="All Apps"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon"
+                src="images/customization/icons/arcmenu/accessories.svg" alt="Accessories"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/graphic.svg"
+                alt="Graphic"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/internet.svg"
+                alt="Internet"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/office.svg"
+                alt="Office"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon"
+                src="images/customization/icons/arcmenu/programming.svg" alt="Programming"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/multimedia.svg"
+                alt="Multimedia"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon"
+                src="images/customization/icons/arcmenu/system-tools.svg" alt="System Tools"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/utilities.svg"
+                alt="Utilities (2)"></li>
+            <li class="arcmenu-side-item"><img class="menu-icon" src="images/customization/icons/arcmenu/others.svg"
+                alt="Others"></li>
+          </ul>
+        </nav>
+        <section class="arcmenu-main" aria-label="ArcMenu content area">
+          <div class="arcmenu-searchbar">
+            <img src="images/customization/icons/arcmenu/search-glass.svg">
+            <span>Search...</span>
+          </div>
+          <div class="arcmenu-separator">
+            <span>Pinned</span>
+          </div>
+          <div class="arcmenu-category">
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/firefox.svg">
+              <span>Firefox</span>
+            </div>
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/themable/file-manager.svg">
+              <span>Files</span>
+            </div>
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/nyarch-customize.png">
+              <span>Nyarch Customize</span>
+            </div>
+          </div>
+          <div class="arcmenu-category">
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/nyarch-tour.png">
+              <span>Nyarch Tour</span>
+            </div>
+          </div>  
+          <div class="arcmenu-separator">
+            <span>Shortcuts</span>
+          </div>
+          <div class="arcmenu-category">
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/software.svg">
+              <span>Software</span>
+            </div>
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/terminal.svg">
+              <span>Terminal</span>
+            </div>
+            <div class="arcmenu-application">
+              <img src="images/customization/icons/overview.svg">
+              <span>Activities Overview</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-container">
+        <!-- App preview placeholder -->
+      </div>
+
+      <div class="quick-menu-container">
+        <!-- Quick settings/menu placeholder -->
+      </div>
+    </div>
+    <div class="bottom-area bottom-bar-area">
+      <div class="bottom-panel">
+        <div class="bottom-panel-left bottom-panel-apps">
+          <div class="bottom-panel-launcher">
+            <img id="bottom-launcher-icon" src="images/customization/icons/view-app.svg" alt="Launcher">
+          </div>
+          <div class="bottom-panel-taskbar" role="list">
+            <div class="taskbar-item"><img src="images/customization/icons/calendar-app.svg" alt="Calendar"></div>
+            <div class="taskbar-item themeable-icon"><img src="images/customization/icons/themable/file-manager.svg"
+                alt="File Explorer"></div>
+            <div class="taskbar-item"><img src="images/customization/icons/software.svg" alt="Software"></div>
+            <div class="taskbar-item"><img src="images/customization/icons/firefox.svg" alt="Firefox"></div>
+            <div class="taskbar-item open-app"><img src="images/customization/icons/nyarch-tour.png" alt="Nyarch Tour">
+            </div>
+            <div class="taskbar-item open-app"><img src="images/customization/icons/nyarch-customize.png"
+                alt="Nyarch Customize"></div>
+          </div>
+        </div>
+        <div class="bottom-panel-right bottom-panel-control">
+          <div class="bottom-time"><span id="current-time-bottom"></span></div>
+          <div class="bottom-quick-settings"><img src="images/customization/icons/quick-settings-transparent.png"
+              alt="Quick Settings"></div>
+          <div class="right-edge-separator"></div>
+        </div>
+      </div>
+      <div class="bottom-dock dock--bottom">
+        <div class="dock-item">
           <img src="images/customization/icons/calendar-app.svg" alt="Calendar">
         </div>
-          <div class="dock-item" aria-label="File Explorer">
-              <img src="images/customization/icons/themable/file-manager.svg" alt="File Explorer">
-          </div>
-        <div class="dock-item" aria-label="Software">
+        <div class="dock-item themeable-icon icon--themable">
+          <img src="images/customization/icons/themable/file-manager.svg" alt="File Explorer">
+        </div>
+        <div class="dock-item">
           <img src="images/customization/icons/software.svg" alt="Software">
         </div>
-        <div class="dock-item" aria-label="Firefox">
+        <div class="dock-item">
           <img src="images/customization/icons/firefox.svg" alt="Firefox">
         </div>
-        <div class="dock-separator" role="separator" aria-hidden="true"></div>
-        <div class="dock-item open-app" aria-label="Nyarch Tour">
+        <div class="dock-separator"></div>
+        <div class="dock-item open-app">
           <img src="images/customization/icons/nyarch-tour.png" alt="Nyarch Tour">
         </div>
-        <div class="dock-item open-app" aria-label="Nyarch Customize">
+        <div class="dock-item open-app">
           <img src="images/customization/icons/nyarch-customize.png" alt="Nyarch Customize">
         </div>
-        <div class="dock-item" aria-label="Trash">
+        <div class="dock-item">
           <img src="images/customization/icons/trash.svg" alt="Trashcan">
         </div>
-        <div class="dock-item" aria-label="View App">
+        <div class="dock-item">
           <img src="images/customization/icons/view-app.svg" alt="View App">
         </div>
       </div>
+    </div>
   </div>
-</div>
 
-<!-- Controls under the preview -->
-<div class="controls">
-  <div class="controls-row">
-    <button id="btn-toggle-top">Toggle Top Panel</button>
-    <button id="btn-toggle-arcmenu">Toggle ArcMenu</button>
+  <!-- Controls under the preview -->
+  <div class="controls">
+    <div class="controls-row">
+      <button onclick="toggleTopPanel()">Toggle Top Panel</button>
+      <button onclick="toggleArcMenu()">Toggle ArcMenu</button>
+    </div>
+    <div class="controls-row">
+      <button onclick="toggleTheme()">Toggle Theme (dark/light)</button>
+      <span>Taskbar position:</span>
+      <button onclick="setTaskbarPosition('left')">Left</button>
+      <button onclick="setTaskbarPosition('bottom')">Bottom</button>
+      <button onclick="setTaskbarPosition('right')">Right</button>
+    </div>
+    <div class="controls-row">
+      <span>Taskbar type:</span>
+      <button onclick="setTaskbarType('none')">None</button>
+      <button onclick="setTaskbarType('dock')">Dock</button>
+      <button onclick="setTaskbarType('panel')">Panel</button>
+    </div>
+    <div class="controls-row">
+      <span>Color:</span>
+      <button class="color" style="background:#ff5555" onclick="setColor('#ff5555')"
+        aria-label="Color #ff5555"></button>
+      <button class="color" style="background:#55ff55" onclick="setColor('#55ff55')"
+        aria-label="Color #55ff55"></button>
+      <button class="color" style="background:#5588ff" onclick="setColor('#5588ff')"
+        aria-label="Color #5588ff"></button>
+      <button class="color" style="background:#ffaa00" onclick="setColor('#ffaa00')"
+        aria-label="Color #ffaa00"></button>
+    </div>
   </div>
-  <div class="controls-row">
-    <button id="btn-toggle-theme">Toggle Theme (dark/light)</button>
-    <button id="btn-toggle-taskbar-pos">Toggle Taskbar Position (top/bottom)</button>
-    <button id="btn-cycle-taskbar">Cycle Taskbar Type</button>
-  </div>
-  <div class="controls-row">
-    <span>Color:</span>
-    <button class="color" data-color="#ff5555" style="background:#ff5555"></button>
-    <button class="color" data-color="#55ff55" style="background:#55ff55"></button>
-    <button class="color" data-color="#5588ff" style="background:#5588ff"></button>
-    <button class="color" data-color="#ffaa00" style="background:#ffaa00"></button>
-  </div>
-</div>
 
   <script src="index.js" defer></script>
 </body>
+
 </html>

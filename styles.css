@@ -1,3 +1,4 @@
+/* ===== GLOBAL SETTINGS ===== */
 /* DO NOT USE PX OR VIEWPORT UNITS IN THIS FILE */
 /* ONLY USE UNITS THAT ARE RELATIVE TO PARENT ELEMENTS */
 
@@ -17,20 +18,34 @@
     --top-bar-text: #7b7e82;
     --arcmenu-main-color: #23282f;
     --arcmenu-side-color: #21252b;
+    --arcmenu-search-color: #293037;
 }
 
-
-.preview-container {
-    background: url('images/customization/background-dark.jpg') center center / cover no-repeat;
-    aspect-ratio: 16 / 9;
-    width: 1920px;
-    height: 1080px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+/* ===== UTILITY CLASSES ===== */
+.hidden {
+    display: none !important;
+}
+.flattened{
+    height: 0% !important;
+}
+.left{
+    left: 0 !important;
+}
+.right{
+    right: 0 !important;
+}
+.arcmenu-iu.left-dash{
+    left: 4.5% !important;
 }
 
+.preview-container.theme-dark {
+    background-image: url('images/customization/full.png');
+}
+.preview-container.theme-light {
+    background-image: url('images/customization/background-light.jpg');
+}
+
+/* ===== TOP BAR ===== */
 .top-bar {
     height: 3%;
     background-color: rgba(0, 0, 0, 0.35); /* translucent to let blur show */
@@ -43,7 +58,7 @@
     font-family: "Adwaita Sans", "Cantarell", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
     width: 100%;
 }
-.top-bar div{
+.top-bar div {
     width: 100%;
 }
 
@@ -69,7 +84,7 @@
 }
 
 .arcmenu-icon {
- padding-left: 1.8%;
+    padding-left: 1.8%;
 }
 .quick-settings-icon {
     padding-left: 84.2%;
@@ -77,13 +92,251 @@
     align-items: center;
 }
 .quick-settings-icon img {
+    height: 70%;
+    display: block;
+    object-fit: contain;
     border-radius: 26% / 100%;
 }
 
+/* ===== PREVIEW MIDDLE AREA ===== */
 .preview-middle {
+    flex: 1 1 auto;
+    position: relative; /* allow absolutely positioned children (e.g., vertical dock) to center within middle */
+}
+
+/* Middle area independent containers */
+.dash-container,
+.arcmenu-ui,
+.app-container,
+.quick-menu-container {
+    position: absolute;
+}
+
+/* Dash container: vertical dock/panel for left/right taskbar */
+.dash-container {
+    width: 4.5%;
+    height: 100%;
+}
+
+/* Arc menu UI panel */
+.arcmenu-ui {
+    left: 0;
+    width: 24.3%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 10.7% 89.3%;
+}
+
+.arcmenu-ui *{
+    color: var(--top-bar-text);
+    font-family: "Adwaita Sans", "Cantarell", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+}
+
+.arcmenu-side {
+    background-color: var(--arcmenu-side-color, #21252b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arcmenu-side-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 50%;
+    gap: 4.1%;
+    width: 66%;
+    padding-left: 0;
+}
+
+.arcmenu-side-item {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.arcmenu-side .menu-icon,
+.arcmenu-side .menu-icon svg {
+    width: 64%;
+    aspect-ratio: 1 / 1;
+}
+
+.arcmenu-main {
+    background-color: var(--arcmenu-main-color, #23282f);
+    border: 1px solid #3c3c3c;
+}
+
+.arcmenu-searchbar{
+    background-color: var(--arcmenu-search-color);
+    height: 3.3%;
+    border-radius: 160px;
+    margin-left: 2%;
+    margin-top: 2.5%;
+    display: flex;
+    align-items: center;
+    width: 93%;
+    padding-left: 2.5%;
+    gap: 2%;
+}
+
+.arcmenu-separator{
+    width: 90%;
+    margin-left: 5%;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    margin-top: 5%;
+    gap: 4%;
+}
+
+.arcmenu-separator::after{
+    content: "";
+    width: 100%;
+    border: var(--top-bar-text) 1px solid;
+}
+
+.arcmenu-separator span{
+    font-weight: bolder;
+}
+
+.arcmenu-category{
+    display: flex;
+    padding-left: 19%;
+    padding-top: 4%;
+    width: 62%;
+    justify-content: space-between;
+    height: 9%;
+}
+
+.arcmenu-application{
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    align-items: center;
+    text-align: center;
+}
+
+.arcmenu-application img{
+    height: 50%;
+    width: fit-content;
+}
+
+/* App container centered by default */
+.app-container {
+    left: 50%;
+    width: 48%;
+    height: 78%;
+    border-radius: 2% / 4%;
+}
+
+/* Quick menu container */
+.quick-menu-container {
+    right: 2%;
+    width: 14%;
+    height: 54%;
+    border-radius: 2% / 4%;
+}
+
+/* Inner vertical dock/panel within dash-container */
+.dash-container .vertical-dock {
+    position: absolute;
+    top: 24.2%;
+    margin: 3.7%;
+}
+
+/* ===== VERTICAL PANELS ===== */
+.vertical-panel {
+    position: absolute;
+    height: 100%;
+    width: 54.6%;
+    background-color: rgba(0,0,0,0.35);
+    -webkit-backdrop-filter: blur(0.6em);
+    backdrop-filter: blur(0.6em);
+    display: flex;
+}
+
+.vertical-panel-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+}
+
+.vertical-launcher {
+    width: 100%;
+    height: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.vertical-launcher img {
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    display: block;
+}
+
+.vertical-taskbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5.5%;
+    width: 100%;
+    height: 50%;
+}
+.v-taskbar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    height: 5%;
+}
+.v-taskbar-item img,
+.v-taskbar-item svg {
+    aspect-ratio: 1 / 1;
+    width: 82%;
+}
+.v-taskbar-item.open-app::after {
+    content: "";
+    position: absolute;
+    bottom: -10%;
+    width: 100%;
+    height: 7%;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.vertical-flex-spacer {
     flex: 1 1 auto;
 }
 
+.vertical-time {
+    color: white;
+    white-space: pre;
+    text-align: center;
+    font-family: "Adwaita Sans", "Cantarell", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+    padding-bottom: 50%;
+    line-height: 103%;
+}
+
+.vertical-quick-settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.vertical-quick-settings img {
+    height: 90%;
+    padding-top: 41%;
+    display: block;
+}
+
+/* Ensure vertical dock uses flex so JS doesn't have to set inline display */
+.vertical-dock { display: flex; }
+
+/* ===== BOTTOM AREA ===== */
 .bottom-area {
     display: flex;
     align-items: center;
@@ -93,12 +346,19 @@
 
 .bottom-panel {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1%;
     height: 54%;
     width: 100%;
-    background-color: rgba(80,0,0,0.35);
+    background-color: rgba(0,0,0,0.35);
+    -webkit-backdrop-filter: blur(0.6em);
+    backdrop-filter: blur(0.6em);
     align-self: flex-end;
+    position: relative;
 }
 
+/* Bottom dock */
 .bottom-dock {
     display: flex;
     align-items: center;
@@ -127,6 +387,122 @@
     aspect-ratio: 1 / 1;
     object-fit: contain;
 }
+.dock-item svg {
+    height: 62%;
+    display: block;
+}
+
+/* Vertical dock for left/right positions */
+.vertical-dock {
+    /* Note: hidden by default, toggle visibility by adding/removing .hidden class */
+    flex-direction: column;
+    height: 50.9%;
+    border-radius: 25% / 4%;
+    background-color: rgba(0,0,0,0.35);
+    -webkit-backdrop-filter: blur(0.6em);
+    backdrop-filter: blur(0.6em);
+    box-sizing: border-box; /* include padding within fixed height so bottom padding works */
+    padding-top: 8.2%; /* breathing room for first icon from top edge */
+    padding-bottom: 7.2%; /* breathing room for last icon from bottom edge */
+}
+.vertical-dock .dock-item img,
+.vertical-dock .dock-item svg {
+    width: 62%;
+    height: auto;
+}
+
+/* Horizontal separator inside vertical dock */
+.dock-separator-horizontal {
+    background-color: rgba(200, 200, 200, 0.22);
+    border-radius: 2% / 100%;
+    width: 60%;
+    height: 1.5%;
+    margin-left: 20.5%;
+}
+
+/* Bottom panel left section (apps) */
+.bottom-panel-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2%;
+    height: 100%;
+}
+.bottom-panel-launcher {
+    height: 100%;
+    align-content: center;
+    padding: 7.6%;
+}
+.bottom-panel-launcher img {
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    display: block;
+}
+.bottom-panel-taskbar {
+    display: flex;
+    align-items: center;
+    gap: 12%;
+    height: 100%;
+}
+.taskbar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0.6%;
+    position: relative; /* anchor for open-app underline */
+}
+.taskbar-item img,
+.taskbar-item svg {
+    height: 84%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    display: block;
+}
+
+/* Panel open app indicator: horizontal bar under icon */
+.bottom-panel .taskbar-item.open-app::after {
+    content: "";
+    position: absolute;
+    bottom: 3%;
+    width: 130%;
+    height: 6%;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Right section controls */
+.bottom-panel-right {
+    display: flex;
+    align-items: center;
+    gap: 1.2%;
+    height: 100%;
+    position: relative;
+    flex-shrink: 0;
+    width: 50%;
+}
+.bottom-time {
+    color: white;
+    white-space: pre;
+    right: 15%;
+    position: absolute;
+    font-family: "Adwaita Sans", "Cantarell", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+}
+.bottom-quick-settings {
+    right: 1.28%;
+    position: absolute;
+}
+.bottom-quick-settings img {
+    height: 70%;
+    display: block;
+}
+
+.right-edge-separator {
+    position: absolute;
+    right: 0.8%;
+    width: 0.15%;
+    height: 100%;
+    background-color: rgba(200, 200, 200, 0.22);
+}
 
 .dock-separator {
     width: 0.2%;
@@ -135,6 +511,32 @@
     border-radius: 100% / 2%;
     margin-left: 0.2%;
 }
+
+.dock-item.open-app::after {
+    content: "";
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    width: 6%;
+    height: 6.7%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Arc menu in top bar */
+.arcmenu-in-top-bar {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-self: start;
+}
+
+
+
+
+/* buttons for the control, not part of the preview, if i forgot to remove that, tell me lol */
 
 .controls {
     margin-top: 1em;
@@ -164,16 +566,17 @@
     border-radius: 50%;
 }
 
-.dock-item.open-app::after {
-    content: "";
-    position: absolute;
-    bottom: 15%;
-    left: 51%;
-    width: 9%;
-    height: 5.7%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    pointer-events: none;
+
+.preview-container {
+    background: url('images/customization/background-dark.jpg') center center / cover no-repeat;
+    aspect-ratio: 16 / 9;
+    width: 1920px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
+
+/* DO NOT WRITE ANYTHING BELOW THIS LINE */

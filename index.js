@@ -1,208 +1,301 @@
-// Global customization settings defined in JS instead of CSS custom properties
+// ===== DEFAULTS =====
+//window.customization = {
+//    color: '#00497c',
+//    theme: 'dark',
+//    taskbar: 'dock',              // none | dock | panel
+//    taskbarPosition: 'bottom',    // left | bottom | right
+//    topPanel: true,
+//    arcmenu: false
+//};
+
 window.customization = {
-  color: '#XXXXXX',
+  color: '#00497c',
   theme: 'dark',
-  taskbar: 'Dock',              // Dock or Panel
-  taskbarPosition: 'bottom',    // left | bottom | right (focus on bottom for now)
-  topPanel: true,      // boolean for showing/hiding the top panel
-  arcmenu: false       // boolean flag for arcmenu availability
+  taskbar: 'none',              // none | dock | panel
+  taskbarPosition: 'bottom',    // left | bottom | right
+  topPanel: false,
+  arcmenu: true
 };
 
-// Time display: format like "Aug 10  3:04PM" and UI controls to modify customization
 
-document.addEventListener('DOMContentLoaded', () => {
-  const timeEl = document.getElementById('current-time');
-  const topBar = document.querySelector('.top-bar');
-  const bottomDash = document.querySelector('.bottom-panel[aria-label="Panel"]'); // Panel (bottom)
-  const bottomDock = document.querySelector('.bottom-dock[aria-label="Dock"]'); // Dock (centered vertically)
-  const arcMenu = document.querySelector('.arcmenu');
-  const container = document.querySelector('.preview-container');
+// ===== THEMEABLE ICONS THEMING =====
+// The icon pack used is tela-circle-icon, all of its themable icons are grayscale top parts that can be put on top of a colored background.
+// this background color is window.customization.color
+// this function will take this color and apply it to all themable icons, the background is pre set in the svg files using the currentColor value.
+/**
+ * updates all themable icons
+ * @returns {Promise<void>} Resolves when all icons have been updated
+ */
+async function updateThemableIconColors() {
+  const iconbackgroundcolor = window.customization.color;
 
-  // Resolve the intended button background color from CSS variable or computed styles
-  const resolveButtonBackground = () => {
-    const root = document.documentElement;
-    let val = getComputedStyle(root).getPropertyValue('--button-background');
-    if (val) val = val.trim();
-    if (!val) {
-      // Fallback to computed background color of a sample button
-      const sampleBtn = document.querySelector('.controls button');
-      if (sampleBtn) {
-        val = getComputedStyle(sampleBtn).backgroundColor;
-      }
-    }
-    if (!val) {
-      // Final fallback matches the CSS fallback in styles.css
-      val = '#00497c';
-    }
-    return val;
-  };
-
-  // Inject and recolor themable SVG icons so their circle (fill=currentColor) matches --button-background
-  const updateThemableIconColors = async () => {
-    const buttonColor = resolveButtonBackground();
-
-    // Helper to apply color directly to elements that use currentColor
-    const paintCurrentColorElements = (root) => {
-      // Update any element that relies on currentColor (like the circle)
-      root.querySelectorAll('[fill="currentColor"]').forEach(el => {
-        // Overwrite inline style color to ensure it takes effect over any existing inline style
-        el.style.color = buttonColor;
-      });
-      // Also set the root svg color to cover any other uses of currentColor
-      if (root instanceof SVGElement) {
-        root.style.color = buttonColor;
-      }
-    };
-
-    // 1) Update already inlined SVGs we previously handled
-    document.querySelectorAll('svg[data-themable-inline="true"]').forEach(svg => {
-      paintCurrentColorElements(svg);
+  // function to set color on elements with a currentColor elements (aka all themeable icons)
+  const paintCurrentColorElements = (root) => {
+    // find all the elements that use currentColor
+    root.querySelectorAll('[fill="currentColor"]').forEach(el => {
+      //  Set the color style directly, overriding any previous color
+      el.style.color = iconbackgroundcolor;
     });
-
-    // 2) Find <img> tags that point to themable SVGs and inline them (only once)
-    const imgs = Array.from(document.querySelectorAll('img'))
-      .filter(img => !img.dataset.themableProcessed && /\/icons\/themable\//.test(img.getAttribute('src') || ''));
-
-    await Promise.all(imgs.map(async img => {
-      const src = img.getAttribute('src');
-      try {
-        const res = await fetch(src);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const svgText = await res.text();
-
-        // Parse the SVG text into a DOM element
-        const tpl = document.createElement('template');
-        tpl.innerHTML = svgText.trim();
-        const svg = tpl.content.querySelector('svg');
-        if (!svg) throw new Error('No <svg> in fetched content');
-
-        // Mark and set sizing to match the original <img>
-        svg.setAttribute('data-themable-inline', 'true');
-        svg.setAttribute('aria-label', img.getAttribute('alt') || '');
-        svg.style.display = 'block';
-        // Copy width/height from computed <img> dimensions via CSS class sizing
-        // The dock uses CSS to size images; preserve class and styles
-        if (img.getAttribute('class')) svg.setAttribute('class', img.getAttribute('class'));
-        if (img.getAttribute('style')) svg.setAttribute('style', img.getAttribute('style'));
-
-        // Apply the resolved color so elements using currentColor update
-        paintCurrentColorElements(svg);
-
-        // Replace the <img> with inline <svg>
-        img.dataset.themableProcessed = 'true';
-        img.replaceWith(svg);
-      } catch (e) {
-        // Mark as processed to avoid retry loops, but keep the <img> in place
-        img.dataset.themableProcessed = 'true';
-        // Optional: console.warn('Failed to inline themable SVG:', src, e);
-      }
-    }));
   };
 
-  const applyCustomization = () => {
-    const cfg = window.customization;
-    const root = document.documentElement;
-    // reflect on data attributes
-    root.dataset.theme = cfg.theme;
-    root.dataset.taskbar = cfg.taskbar;
-    root.dataset.taskbarPosition = cfg.taskbarPosition;
-    // mirror color to CSS var for potential styling
-    root.style.setProperty('--customization-color', cfg.color || '#ffffff');
+  // 1) Update SVGs we previously handled
+  document.querySelectorAll('svg[data-themable-inline="true"]').forEach(svg => {
+    paintCurrentColorElements(svg);
+  });
 
-    // toggle top bar
-    if (topBar) topBar.style.display = cfg.topPanel ? '' : 'none';
-    // Taskbar overlays visibility (focus on bottom for now)
-    if (cfg.taskbarPosition === 'bottom') {
-      if (bottomDash) bottomDash.style.display = cfg.taskbar === 'Panel' ? '' : 'none';
-      if (bottomDock) bottomDock.style.display = cfg.taskbar === 'Dock' ? '' : 'none';
+  // 2) Find <img> tags that point to themable SVGs and inline them (only once)
+  const imgs = Array.from(document.querySelectorAll('.icon--themable img, .themeable-icon img'))
+    .filter(img => !img.dataset.themableProcessed); // ignore already processed icons
+
+  await Promise.all(imgs.map(async img => {
+    const src = img.getAttribute('src');  // Get the source URL of the SVG
+    try {
+      const res = await fetch(src); // Fetch the SVG content
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const svgText = await res.text();
+
+      // Parse the SVG text into a DOM element
+      const tpl = document.createElement('template');
+      tpl.innerHTML = svgText.trim();
+      const svg = tpl.content.querySelector('svg');
+      if (!svg) throw new Error('No <svg> in fetched content');
+
+      // Ensure scalable, centered SVG content
+      // If the SVG has no viewBox, derive it from width/height attributes
+      if (!svg.hasAttribute('viewBox')) {
+        const w = parseFloat(svg.getAttribute('width') || '0');
+        const h = parseFloat(svg.getAttribute('height') || '0');
+        if (w > 0 && h > 0) {
+          svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        }
+      }
+
+      // Center and scale to fit preserving aspect ratio
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+
+      // Mark and set sizing to match the original <img>
+      svg.setAttribute('data-themable-inline', 'true');
+      svg.setAttribute('aria-label', img.getAttribute('alt') || '');
+      svg.style.display = 'block';
+
+      // Copy width/height from computed <img> dimensions via CSS class sizing
+      if (img.getAttribute('class')) svg.setAttribute('class', img.getAttribute('class'));
+      if (img.getAttribute('style')) svg.setAttribute('style', img.getAttribute('style'));
+
+      // Apply the resolved color so elements using currentColor update
+      paintCurrentColorElements(svg);
+
+      // Replace the <img> with inline <svg>
+      img.dataset.themableProcessed = 'true';
+      img.replaceWith(svg);
+    } catch (e) {
+      // Mark as processed to avoid retry loops, but keep the <img> in place
+      img.dataset.themableProcessed = 'true';
+    }
+  }));
+}
+
+// ===== CUSTOMIZATION HANDLING =====
+// a few things to note:
+// both the right side and left side panels are the exact same element, just positioned differently 
+// (at the exeption of the panel that has to changed from left:0% to right: 0% when the dash is on the right side)
+// the bottom panel has an effect on the size of the arcmenu so when neither the dock or the panel is shown, we have to set their container to 0% height
+
+/**
+ * handles the position and visibility of all the elemtents that can be customized
+ * @returns {void}
+ */
+function applyCustomization() {
+  const cfg = window.customization;  // get the config
+  const root = document.documentElement;
+  const taskbarType = String(cfg.taskbar || '').toLowerCase();
+  const taskbarPos = String(cfg.taskbarPosition || '').toLowerCase();
+
+  // Query elements
+  const topBar = document.querySelector('.shell-top-bar, .top-bar');
+  const bottomDash = document.querySelector('.bottom-panel');
+  const bottomDock = document.querySelector('.dock--bottom, .bottom-dock');
+  const horizontalDock = document.querySelector('.sidebar-dock, .vertical-dock');
+  const verticalPanel = document.querySelector('.sidebar-panel, .vertical-panel');
+  const bottomLauncherIcon = document.getElementById('bottom-launcher-icon');
+  const verticalLauncherIcon = document.getElementById('vertical-launcher-icon');
+  const topBarArcIcon = document.querySelector('.top-bar-activities img, .arcmenu-in-top-bar img');
+  const container = document.querySelector('.preview, .preview-container');
+  const bottomArea = document.querySelector('.bottom-bar-area, .bottom-area');
+  const dashContainer = document.querySelector('.sidebars, .dash-container');
+  const arcmenuContainer = document.querySelector(".arcmenu-ui");
+
+  // Apply customization settings to root element
+  root.dataset.theme = cfg.theme;
+  root.dataset.taskbar = taskbarType;
+  root.dataset.taskbarPosition = taskbarPos;
+
+  // mirror color to CSS var for potential styling
+  root.style.setProperty('--customization-color', cfg.color || '#ffffff');
+
+  // toggle top bar via utility class
+  topBar.classList.toggle('hidden', !cfg.topPanel);
+
+  // the bottom area is flattened when there's nothing to show
+  const showBottomArea = taskbarPos === 'bottom' && taskbarType !== 'none';
+  if (bottomArea) bottomArea.classList.toggle('flattened', !showBottomArea);
+
+  // vertical dash visibility
+  if (dashContainer) {
+    dashContainer.classList.remove('left', 'right');
+    // visible if it's on either side and not none
+    const showDash = (taskbarPos === 'left' || taskbarPos === 'right') && taskbarType !== 'none';
+    dashContainer.classList.toggle('hidden', !showDash);
+    if (showDash) {
+      dashContainer.classList.add(taskbarPos === 'left' ? 'left' : 'right');
+    }
+  }
+
+  // Vertical dock visibility
+  if (horizontalDock) {
+    const showVDock = (taskbarPos === 'left' || taskbarPos === 'right') && taskbarType === 'dock';
+    horizontalDock.classList.toggle('hidden', !showVDock);
+  }
+
+  // Vertical panel visibility and side
+  if (verticalPanel) {
+    const showVPanel = (taskbarPos === 'left' || taskbarPos === 'right') && taskbarType === 'panel';
+    verticalPanel.classList.toggle('hidden', !showVPanel);
+    verticalPanel.classList.remove('left', 'right');
+    if (showVPanel) verticalPanel.classList.add(taskbarPos === 'right' ? 'right' : 'left');
+  }
+
+  // Bottom: show dock or panel
+  if (bottomDash) bottomDash.classList.toggle('hidden', !(taskbarPos === 'bottom' && taskbarType === 'panel'));
+  if (bottomDock) bottomDock.classList.toggle('hidden', !(taskbarPos === 'bottom' && taskbarType === 'dock'));
+
+  // update top bar icon: ArcMenu vs Activities
+  if (topBarArcIcon) {
+    const useActivities = !cfg.arcmenu || taskbarType === 'panel';
+    topBarArcIcon.src = useActivities
+      ? 'images/customization/icons/activities.png'
+      : 'images/customization/icons/arch.svg';
+    topBarArcIcon.alt = useActivities ? 'Activities' : 'ArcMenu';
+  }
+
+  // update arcmenu visibility
+  if (arcmenuContainer) {
+    const arcmenustate = cfg.arcmenu
+    arcmenuContainer.classList.toggle("hidden", !arcmenustate)
+  }
+
+  // update launcher icons based on ArcMenu state
+  if (bottomLauncherIcon) {
+    bottomLauncherIcon.src = cfg.arcmenu
+      ? 'images/customization/icons/arch.svg'
+      : 'images/customization/icons/view-app.svg';
+    bottomLauncherIcon.alt = cfg.arcmenu ? 'ArcMenu' : 'Launcher';
+  }
+  if (verticalLauncherIcon) {
+    verticalLauncherIcon.src = cfg.arcmenu
+      ? 'images/customization/icons/arch.svg'
+      : 'images/customization/icons/view-app.svg';
+    verticalLauncherIcon.alt = cfg.arcmenu ? 'ArcMenu' : 'Launcher';
+  }
+
+  // switch background image based on theme via utility classes
+  if (container) {
+    container.classList.remove('theme-dark', 'theme-light');
+    container.classList.add(cfg.theme === 'dark' ? 'theme-dark' : 'theme-light');
+  }
+
+  // Re-apply themable icon colors when customization changes
+  updateThemableIconColors();
+}
+
+// time formatting
+function formatTimestamp(d) {
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(d);
+  const day = d.getDate();
+  let hour = d.getHours();
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  const minute = String(d.getMinutes()).padStart(2, '0');
+  return `${month} ${day}  ${hour}:${minute}${ampm}`;
+}
+
+function formatVerticalTime(d) {
+  let hour = d.getHours();
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  const minute = String(d.getMinutes()).padStart(2, '0');
+  // 3 lines: time, two centered dots under the colon, AM/PM
+  return `${hour}:${minute}\n••\n${ampm}`;
+}
+
+function isVerticalPanelActive() {
+  const cfg = window.customization;
+  const taskbarType = String(cfg.taskbar || '').toLowerCase();
+  const pos = String(cfg.taskbarPosition || '').toLowerCase();
+  return (taskbarType === 'panel') && (pos === 'left' || pos === 'right');
+}
+
+function updateTime() {
+  const now = new Date();
+  const formatted = formatTimestamp(now);
+  const timeEl = document.getElementById('current-time');
+  const bottomTimeEl = document.getElementById('current-time-bottom');
+  const verticalTimeEl = document.getElementById('current-time-vertical');
+
+  if (timeEl) timeEl.textContent = formatted;
+  if (bottomTimeEl) bottomTimeEl.textContent = formatted;
+
+  if (verticalTimeEl) {
+    if (isVerticalPanelActive()) {
+      verticalTimeEl.textContent = formatVerticalTime(now);
     } else {
-      if (bottomDash) bottomDash.style.display = 'none';
-      if (bottomDock) bottomDock.style.display = 'none';
+      verticalTimeEl.textContent = '';
     }
-    // show/hide arcmenu icon
-    if (arcMenu) arcMenu.style.display = cfg.arcmenu ? '' : 'none';
-    // switch background image based on theme
-    if (container) {
-      if (cfg.theme === 'dark') {
-        container.style.backgroundImage = "url('images/customization/background-dark.png')";
-      } else {
-        container.style.backgroundImage = "url('images/customization/background-light.jpg')";
-      }
-      // keep other background properties the same via CSS
-    }
+  }
+}
 
-    // Re-apply themable icon colors when customization changes
-    updateThemableIconColors();
-  };
+// ===== SETTINGS HANDLERS =====
+window.toggleTopPanel = function () {
+  window.customization.topPanel = !window.customization.topPanel;
+  applyCustomization();
+  updateTime();
+};
 
-  // time formatting
-  const formatTimestamp = (d) => {
-    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(d);
-    const day = d.getDate();
-    let hour = d.getHours();
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12 || 12;
-    const minute = String(d.getMinutes()).padStart(2, '0');
-    return `${month} ${day}  ${hour}:${minute}${ampm}`;
-  };
+window.toggleArcMenu = function () {
+  window.customization.arcmenu = !window.customization.arcmenu;
+  applyCustomization();
+  updateTime();
+};
 
-  const updateTime = () => {
-    if (timeEl) timeEl.textContent = formatTimestamp(new Date());
-  };
+window.toggleTheme = function () {
+  window.customization.theme = window.customization.theme === 'dark' ? 'light' : 'dark';
+  applyCustomization();
+  updateTime();
+};
 
-  // initial apply and time
+window.setTaskbarPosition = function (pos) {
+  window.customization.taskbarPosition = String(pos);
+  applyCustomization();
+  updateTime();
+};
+
+window.setTaskbarType = function (type) {
+  window.customization.taskbar = String(type);
+  applyCustomization();
+  updateTime();
+};
+
+window.setColor = function (hex) {
+  window.customization.color = String(hex);
+  applyCustomization();
+  updateTime();
+};
+
+// Initialize after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
   applyCustomization();
   updateTime();
   setInterval(updateTime, 30 * 1000);
-
-  // Also recolor themable icons on initial load (in case applyCustomization doesn't run)
   updateThemableIconColors();
-
-  // Wire controls
-  const byId = (id) => document.getElementById(id);
-  const btnToggleTop = byId('btn-toggle-top');
-  const btnToggleArc = byId('btn-toggle-arcmenu');
-  const btnToggleTheme = byId('btn-toggle-theme');
-  const btnToggleTaskbarPos = byId('btn-toggle-taskbar-pos');
-  const btnCycleTaskbar = byId('btn-cycle-taskbar');
-
-  if (btnToggleTop) btnToggleTop.addEventListener('click', () => {
-    window.customization.topPanel = !window.customization.topPanel;
-    applyCustomization();
-  });
-
-  if (btnToggleArc) btnToggleArc.addEventListener('click', () => {
-    window.customization.arcmenu = !window.customization.arcmenu;
-    applyCustomization();
-  });
-
-  if (btnToggleTheme) btnToggleTheme.addEventListener('click', () => {
-    window.customization.theme = window.customization.theme === 'dark' ? 'light' : 'dark';
-    applyCustomization();
-  });
-
-  if (btnToggleTaskbarPos) btnToggleTaskbarPos.addEventListener('click', () => {
-    const order = ['left', 'bottom', 'right'];
-    const cur = window.customization.taskbarPosition;
-    const idx = (order.indexOf(cur) + 1) % order.length;
-    window.customization.taskbarPosition = order[idx];
-    applyCustomization();
-  });
-
-  if (btnCycleTaskbar) btnCycleTaskbar.addEventListener('click', () => {
-    const order = ['Dock', 'Panel'];
-    const cur = window.customization.taskbar;
-    const idx = (order.indexOf(cur) + 1) % order.length;
-    window.customization.taskbar = order[idx];
-    applyCustomization();
-  });
-
-  document.querySelectorAll('.controls .color').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const color = e.currentTarget.getAttribute('data-color');
-      window.customization.color = color;
-      applyCustomization();
-    });
-  });
-
 });
